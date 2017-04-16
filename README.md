@@ -42,3 +42,11 @@ Sends to PushPress server
 4. Run...
 
 `DISABLE_WHITELIST=true bundle exec jekyll build --config=_config.yml,pushpress_config.yml --destination=/dev/null`
+
+## Sample
+
+`cd sample`
+
+`bundle install`
+
+`PAGES_REPO_NWO=ehfeng/jekyll-pushpress DISABLE_WHITELIST=true bundle exec jekyll serve --config=_config.yml,pushpress_config.yml`

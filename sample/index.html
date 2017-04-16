@@ -1,0 +1,15 @@
+---
+---
+<html>
+<body>
+<div>Hi</div>
+<ul class="post-list">
+  {% for post in site.posts %}
+    <li>
+    	<div class="title"><a href="{{ post.url }}">{{ post.title }}</a></div>
+    </li>
+    <br>
+  {% endfor %}
+</ul>
+</body>
+</html>
