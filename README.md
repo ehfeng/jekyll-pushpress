@@ -11,10 +11,9 @@
 
 `bundle exec gem push jekyll-pushpress-0.0.1.gem`
 
-
 ## Steps
 
-1. `git clone repo`
+1. `git clone --depth 1 repo`
 
 2. Replace Gemfile
 
@@ -35,7 +34,6 @@ Sends to PushPress server
 - hash of page or document content.
 - if subscribe is enabled, use or add templates to `_layouts/pushpress` directory
 	- `letter.html`
-	- `confirm-send.html` (to author)
 	- `subscribe.html` (webview)
 	- `unsubscribe.html` (webview)
 

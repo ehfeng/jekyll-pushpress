@@ -1,39 +1,53 @@
+require 'digest'
+require 'json'
+
+def process_collection(collection, site, body)
+  body[collection.label] = []
+
+  for doc in collection.docs
+    md5 = Digest::MD5.new
+    md5.update doc.content
+    doc.path.slice! site.source
+    body[collection.label].push({
+      'url': doc.url,
+      'hash': md5.hexdigest,
+      'date': doc.date,
+      'fields': doc.data,
+      'path': doc.path,
+    })
+  end
+  return body
+end
+
 module JekyllPushPress
+  Jekyll::Hooks.register :site, :pre_render do |site|
+    for doc in site.documents
+      doc.data['layout'] = 'pushpress'
+    end
+  end
 
-  # class Generator < Jekyll::Generator
-  #   safe true
-  #   priority :lowest
+  Jekyll::Hooks.register :site, :post_render do |site|
+    body = {
+      :posts => [],
+      :pages => [],
+    }
 
-  #   def generate(site)
-  #     for doc in site.documents
-  #       puts doc.content
-  #     end
+    for page in site.pages
+      md5 = Digest::MD5.new
+      md5.update page.content
+      body[:pages].push({'url': page.url, 'hash': md5.hexdigest, 'fields': page.data})
+    end
 
-  #     # puts "Posts"
-  #     # for post in site.posts.docs
-  #     #   puts post.url
-  #     #   puts post.collection.label
-  #     # end
-      
-  #     # puts "Pages"
-  #     # puts site.pages.length
-  #     # for page in site.pages
-  #     #   puts page.url
-  #     #   puts page.collection.label
-  #     # end
-  #   end
-  # end
-
-  # Jekyll::Hooks.register :site, :post_render do |site|
-  #   puts site.to_yaml
-  # end
-
-  # Jekyll::Hooks.register :pages, :post_render do |page|
-  #   # puts page.url
-  # end
-
-  Jekyll::Hooks.register :documents, :pre_render do |doc|
-    puts doc.data['layout'] = 'pushpress/pushpress'
+    site.collections.each do |label, collection|
+      if collection.label == 'posts'
+        body = process_collection(collection, site, body)
+      else
+        if collection.write?
+          body = process_collection(collection, site, body)
+        end
+      end
+    end
+    puts body.to_json
   end
 
   private
